@@ -22,8 +22,12 @@ class PaymentFactory implements PaymentFactoryInterface
     public function create(array $options = array())
     {
         $options = ArrayObject::ensureArrayObject($options);
+        $options->defaults(array(
+            'loginId' => '',
+            'transactionKey' => '',
+            'sandbox' => true,
+        ));
         $options->validateNotEmpty(array('loginId', 'transactionKey'));
-        $options['sandbox'] = null === $options['sandbox'] ? true : (bool) $options['sandbox'];
 
         $api = new AuthorizeNetAIM($options['loginId'], $options['transactionKey']);
         $api->setSandbox($options['sandbox']);
