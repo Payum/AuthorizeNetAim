@@ -1,18 +1,18 @@
 <?php
 namespace Payum\AuthorizeNet\Aim\Tests;
 
-use Payum\AuthorizeNet\Aim\PaymentFactory;
+use Payum\AuthorizeNet\Aim\AuthorizeNetAimGatewayFactory;
 
-class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
+class AuthorizeNetAimGatewayFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @test
      */
-    public function shouldImplementPaymentFactoryInterface()
+    public function shouldImplementGatewayFactoryInterface()
     {
-        $rc = new \ReflectionClass('Payum\AuthorizeNet\Aim\PaymentFactory');
+        $rc = new \ReflectionClass('Payum\AuthorizeNet\Aim\AuthorizeNetAimGatewayFactory');
 
-        $this->assertTrue($rc->implementsInterface('Payum\Core\PaymentFactoryInterface'));
+        $this->assertTrue($rc->implementsInterface('Payum\Core\GatewayFactoryInterface'));
     }
 
     /**
@@ -20,73 +20,73 @@ class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function couldBeConstructedWithoutAnyArguments()
     {
-        new PaymentFactory();
+        new AuthorizeNetAimGatewayFactory();
     }
 
     /**
      * @test
      */
-    public function shouldCreateCorePaymentFactoryIfNotPassed()
+    public function shouldCreateCoreGatewayFactoryIfNotPassed()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
-        $this->assertAttributeInstanceOf('Payum\Core\PaymentFactory', 'corePaymentFactory', $factory);
+        $this->assertAttributeInstanceOf('Payum\Core\GatewayFactory', 'coreGatewayFactory', $factory);
     }
 
     /**
      * @test
      */
-    public function shouldUseCorePaymentFactoryPassedAsSecondArgument()
+    public function shouldUseCoreGatewayFactoryPassedAsSecondArgument()
     {
-        $corePaymentFactory = $this->getMock('Payum\Core\PaymentFactoryInterface');
+        $coreGatewayFactory = $this->getMock('Payum\Core\GatewayFactory');
 
-        $factory = new PaymentFactory(array(), $corePaymentFactory);
+        $factory = new AuthorizeNetAimGatewayFactory(array(), $coreGatewayFactory);
 
-        $this->assertAttributeSame($corePaymentFactory, 'corePaymentFactory', $factory);
+        $this->assertAttributeSame($coreGatewayFactory, 'coreGatewayFactory', $factory);
     }
 
     /**
      * @test
      */
-    public function shouldAllowCreatePayment()
+    public function shouldAllowCreateGateway()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
-        $payment = $factory->create(array('login_id' => 'aLoginId', 'transaction_key' => 'aTransKey'));
+        $gateway = $factory->create(array('login_id' => 'aLoginId', 'transaction_key' => 'aTransKey'));
 
-        $this->assertInstanceOf('Payum\Core\Payment', $payment);
+        $this->assertInstanceOf('Payum\Core\Gateway', $gateway);
 
-        $this->assertAttributeNotEmpty('apis', $payment);
-        $this->assertAttributeNotEmpty('actions', $payment);
+        $this->assertAttributeNotEmpty('apis', $gateway);
+        $this->assertAttributeNotEmpty('actions', $gateway);
 
-        $extensions = $this->readAttribute($payment, 'extensions');
+        $extensions = $this->readAttribute($gateway, 'extensions');
         $this->assertAttributeNotEmpty('extensions', $extensions);
     }
 
     /**
      * @test
      */
-    public function shouldAllowCreatePaymentWithCustomApi()
+    public function shouldAllowCreateGatewayWithCustomApi()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
-        $payment = $factory->create(array('payum.api' => new \stdClass()));
+        $gateway = $factory->create(array('payum.api' => new \stdClass()));
 
-        $this->assertInstanceOf('Payum\Core\Payment', $payment);
+        $this->assertInstanceOf('Payum\Core\Gateway', $gateway);
 
-        $this->assertAttributeNotEmpty('apis', $payment);
-        $this->assertAttributeNotEmpty('actions', $payment);
+        $this->assertAttributeNotEmpty('apis', $gateway);
+        $this->assertAttributeNotEmpty('actions', $gateway);
 
-        $extensions = $this->readAttribute($payment, 'extensions');
+        $extensions = $this->readAttribute($gateway, 'extensions');
         $this->assertAttributeNotEmpty('extensions', $extensions);
     }
 
     /**
      * @test
      */
-    public function shouldAllowCreatePaymentConfig()
+    public function shouldAllowCreateGatewayConfig()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
         $config = $factory->createConfig();
 
@@ -97,9 +97,9 @@ class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldAddDefaultConfigPassedInConstructorWhileCreatingPaymentConfig()
+    public function shouldAddDefaultConfigPassedInConstructorWhileCreatingGatewayConfig()
     {
-        $factory = new PaymentFactory(array(
+        $factory = new AuthorizeNetAimGatewayFactory(array(
             'foo' => 'fooVal',
             'bar' => 'barVal',
         ));
@@ -120,7 +120,7 @@ class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldConfigContainDefaultOptions()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
         $config = $factory->createConfig();
 
@@ -135,7 +135,7 @@ class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldConfigContainFactoryNameAndTitle()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
         $config = $factory->createConfig();
 
@@ -156,7 +156,7 @@ class PaymentFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function shouldThrowIfRequiredOptionsNotPassed()
     {
-        $factory = new PaymentFactory();
+        $factory = new AuthorizeNetAimGatewayFactory();
 
         $factory->create();
     }
