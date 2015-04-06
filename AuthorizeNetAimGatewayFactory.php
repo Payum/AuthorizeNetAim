@@ -6,15 +6,15 @@ use Payum\AuthorizeNet\Aim\Action\CaptureAction;
 use Payum\AuthorizeNet\Aim\Action\StatusAction;
 use Payum\AuthorizeNet\Aim\Bridge\AuthorizeNet\AuthorizeNetAIM;
 use Payum\Core\Bridge\Spl\ArrayObject;
-use Payum\Core\PaymentFactory as CorePaymentFactory;
-use Payum\Core\PaymentFactoryInterface;
+use Payum\Core\GatewayFactoryInterface;
+use Payum\Core\GatewayFactory as CoreGatewayFactory;
 
-class PaymentFactory implements PaymentFactoryInterface
+class AuthorizeNetAimGatewayFactory implements GatewayFactoryInterface
 {
     /**
-     * @var PaymentFactoryInterface
+     * @var GatewayFactoryInterface
      */
-    protected $corePaymentFactory;
+    protected $coreGatewayFactory;
 
     /**
      * @var array
@@ -23,11 +23,11 @@ class PaymentFactory implements PaymentFactoryInterface
 
     /**
      * @param array $defaultConfig
-     * @param PaymentFactoryInterface $corePaymentFactory
+     * @param GatewayFactoryInterface $coreGatewayFactory
      */
-    public function __construct(array $defaultConfig = array(), PaymentFactoryInterface $corePaymentFactory = null)
+    public function __construct(array $defaultConfig = array(), GatewayFactoryInterface $coreGatewayFactory = null)
     {
-        $this->corePaymentFactory = $corePaymentFactory ?: new CorePaymentFactory();
+        $this->coreGatewayFactory = $coreGatewayFactory ?: new CoreGatewayFactory();
         $this->defaultConfig = $defaultConfig;
     }
 
@@ -36,7 +36,7 @@ class PaymentFactory implements PaymentFactoryInterface
      */
     public function create(array $config = array())
     {
-        return $this->corePaymentFactory->create($this->createConfig($config));
+        return $this->coreGatewayFactory->create($this->createConfig($config));
     }
 
     /**
@@ -46,7 +46,7 @@ class PaymentFactory implements PaymentFactoryInterface
     {
         $config = ArrayObject::ensureArrayObject($config);
         $config->defaults($this->defaultConfig);
-        $config->defaults($this->corePaymentFactory->createConfig((array) $config));
+        $config->defaults($this->coreGatewayFactory->createConfig((array) $config));
         $config->defaults(array(
             'payum.factory_name' => 'authorize_net_aim',
             'payum.factory_title' => 'Authorize.NET AIM',
